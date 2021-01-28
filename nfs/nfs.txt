@@ -1,0 +1,43 @@
+1 准备一台机器1.48，搭建NFS服务
+ 
+yum install nfs-utils
+  
+vim /etc/exports
+/data/nfs/ 10.15.1.0/24(sync,rw,no_root_squash)
+  
+systemctl start nfs;  systemctl start rpcbind  
+systemctl enable nfs
+
+2 在node节点1.46上测试
+ 
+yum install nfs-utils
+showmount -e 10.15.1.48
+
+
+1）到NFS的共享目录下创建一个文件
+cd /data/k8s/
+echo "Test file" > 1.html
+ 
+2）进入到httpd-pod里
+kubectl exec -it httpd-pvpod bash
+cat /usr/local/apache2/htdocs/1.html
+ 
+3）删除httpd-pvpod
+kubectl delete pod httpd-pvpod
+cat /data/k8s/1.html
+ 
+ 
+4）重建httpd-pod
+kubectl create -f pvpod.yaml
+ 
+ 
+5）curl访问
+ 
+kubectl get pod httpd-pvpod -o wide //查看其对应的IP
+NAME READY STATUS RESTARTS AGE IP NODE NOMINATED NODE
+httpd-pod 1/1 Running 0 2m 172.20.3.5 172.7.15.114 <none>
+ 
+curl 172.20.3.5/1.html
+ 
+ 
+https://www.cnblogs.com/weifeng1463/p/10037803.html

@@ -41,3 +41,6 @@ curl 172.20.3.5/1.html
  
  
 https://www.cnblogs.com/weifeng1463/p/10037803.html
+
+无法删除 PV 的解决方法
+kubectl patch pv pv-nfs-gysl -p '{"metadata":{"finalizers":null}}'
